@@ -2,7 +2,8 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-from embeddings import one_hot_embeddings
+from embeddings.route_embeddings import *
+
 
 
 def bar_plot(df, col='Grade'):  # col can be 'Grade' or 'UserRating'
@@ -29,7 +30,7 @@ def plot_user_rating_per_grade(df):
 
 
 def plot_route(df, route_i):
-    m = one_hot_embeddings.bitmap_2d([df['Moves'][route_i]])[0]
+    m = bag_of_holds_2d([df['Moves'][route_i]])[0]
     grade = df['Grade'][route_i]
     plt.imshow(m, cmap ='Greens', origin='lower')
     plt.xticks(list(range(11)), labels=['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K'])
@@ -42,11 +43,11 @@ def plot_grade_heatmap(df, grade):
     heatmap = np.zeros((18, 11))
     if grade == 'all':
         for moves in df.Moves:
-            heatmap += one_hot_embeddings.bitmap_2d([moves])[0]
+            heatmap += bag_of_holds_2d([moves])[0]
 
     else:
         for moves in df[df.Grade == grade].Moves:
-            heatmap += one_hot_embeddings.bitmap_2d([moves])[0]
+            heatmap += bag_of_holds_2d([moves])[0]
     plt.imshow(heatmap, cmap ='Greens', origin='lower')
     plt.xticks(list(range(11)), labels=['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K'])
     plt.yticks(list(range(18)), labels=list(range(1,19)))
