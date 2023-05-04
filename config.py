@@ -1,0 +1,5 @@
+
+N_ROWS = 18
+N_COLS = 11
+
+DATASET = '2016.json'
