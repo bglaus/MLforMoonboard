@@ -60,36 +60,40 @@ class hold2vec():
         return
 
     
-    # returns a matrix of shape ()
+    
     def get_hold_matrix(self):
+        'returns a matrix of shape ()'
         return self.neuralnet.layers[2].get_weights()[0]
 
     def get_hold_embedding(self, hold_i):
         return self.neuralnet.layers[2].get_weights()[0][hold_i,:]
 
 
-    # save weights to file
     def save_hold_matrix(self, filename='./data/embeddings/hold2vec_embeddings.npy'):
+        'Save the matrix of hold embeddings to a npy file (at filename).'
         hold_m = self.get_hold_matrix()
         with open(filename, 'wb') as f:
             np.save(f, hold_m)
 
     def load_hold_matrix(self, filename='./data/embeddings/hold2vec_embeddings.npy'):
+        'Load the hold matrix from a npy file (at filename).'
         with open(filename, 'rb') as f:
             hold_m = np.load(f)
         return hold_m
 
     # BUILDING THE TRAINING DATA:
 
-    # Given the index of a hold, returns a 1-dimensional one-hot vector
     def create_one_hot_hold_vector(self, i):
+        'Given the index of a hold, returns a 1-dimensional one-hot vector.'
         one_hot = np.zeros(18*11)
         one_hot[i] = 1
         return one_hot
 
-    # Given the index of a hold, returns a 1-dimensional bitmap of all holds within reach
-    # "within reach" is a 2 dimensional concept: it's a circle around the index hold with a radius of "window_size"
     def create_context_bitmap(self, i):
+        '''
+        Given the index of a hold, returns a 1-dimensional bitmap of all holds within reach
+        "within reach" is a 2 dimensional concept: it's a circle around the index hold with a radius of "window_size"
+        '''
         row = i // self.n_rows
         col = i % self.n_rows
         context_bitmap = np.zeros(self.n_rows * self.n_cols)
@@ -105,11 +109,13 @@ class hold2vec():
         return context_bitmap
 
 
-    # given a list of routes represented as 1-dimensional "bag of holds", builds a training set of (1-d) one-hot hold-vectors and 
-    # (1-d) context bitmaps. For any hold, we want to train on predicting the probability of nearby holds being used in the same route
-    # skip-gram:    given the context, predict which hold was left out
-    # cbow:         given a hold, predict how likely other holds are to show up together with it
     def build_training_data(self, routes, objective='skip-gram'):
+        '''
+        given a list of routes represented as 1-dimensional "bag of holds", builds a training set of (1-d) one-hot hold-vectors and 
+        (1-d) context bitmaps. For any hold, we want to train on predicting the probability of nearby holds being used in the same route
+        skip-gram:    given the context, predict which hold was left out
+        cbow:         given a hold, predict how likely other holds are to show up together with it
+        ''' 
         assert len(routes) > 0
         assert objective == 'skip-gram' or objective == 'cbow'
 

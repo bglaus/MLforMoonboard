@@ -6,9 +6,6 @@ import config
 from embeddings.route_embeddings import *
 from embeddings.embedding_helpers import *
 
-# TODO: 
-# - add support for different difficulty scales, e.g. Font-Scale, V-Grade
-
 def bar_plot(df, col='font_scale'): 
     '''
     Bar plot of the number of routes for each grade ('6A+' to '8B+')
@@ -20,15 +17,18 @@ def bar_plot(df, col='font_scale'):
     df[col].value_counts().sort_index().plot(kind='barh')
     return
 
-# Equality Condition on conditional_col and conditional_val, e.g. select all routes where Grade == 8B+
-# For the values in 'col', this plots the count of each unique element. E.g. For each user_rating, plot how many routes there are 
-# (within grade 8B+).
+
 def condtional_bar_plot(df, col='user_rating', condition_col='Grade', condition_val='8B+'):
+    '''
+    Equality Condition on conditional_col and conditional_val, e.g. select all routes where Grade == 8B+
+    For the values in 'col', this plots the count of each unique element. E.g. For each user_rating, plot how many routes there are 
+    (within grade 8B+).
+    '''
     df[df[condition_col] == condition_val][col].value_counts().sort_index().plot(kind='barh')
     return
 
-# Bar Plot with 4 bars for each grade ('6A+' to '8B+'), the 4 bars show the number of routes with grade 0,1,2 or 3. 
 def plot_user_rating_per_grade(df, scale = 'font_scale'):
+    "Bar Plot with 4 bars for each grade ('6A+' to '8B+'), the 4 bars show the number of routes with grade 0,1,2 or 3. "
     assert scale == 'font_scale' or scale == 'v_grade'
 
     df_rating = pd.DataFrame({
@@ -70,9 +70,12 @@ def plot_user_rating_per_grade_w_error_bar(df, groupby_index='font_scale'):
     plt.show()
     return
 
-# takes a Route represented as a list of strings: e.g. ['B5', 'G5', 'D7', 'G9', 'B12', 'G15', 'C18']
-# creates a plot of the route as a 11 times 18 grid, Holds that are part of the route are dark green.
+
 def plot_route(route, title = None):
+    '''
+    Takes a Route represented as a list of strings: e.g. ['B5', 'G5', 'D7', 'G9', 'B12', 'G15', 'C18']
+    Creates a plot of the route as a 11 times 18 grid, Holds that are part of the route are dark green.
+    '''
     m = bag_of_holds([route])
     m = reshape_1d_to_2d(m)[0]
 
@@ -84,8 +87,8 @@ def plot_route(route, title = None):
     plt.show()
     return
 
-# takes a Dataframe and the index. Plots the route from that index.
 def plot_route_from_df(df, route_i, scale='font_scale'):
+    "Takes a Dataframe and the index. Plots the route from that index."
     assert scale == 'font_scale' or scale == 'v_grade'
 
     route = df['holds'][route_i]
@@ -94,11 +97,13 @@ def plot_route_from_df(df, route_i, scale='font_scale'):
     return
 
 
-# Plot a heatmap (11 times 18 grid) of the holds used for routes of that grade. Darker (green) values
-# mean that a hold is frequently used in routes of that grad. Bright values mean it is hardly used.
-# grade:     'all', '6A+', '6B+', '7B+', '7A', '7A+', '6C+', '6C', '6B', '7C', '7C+',
-#            '7B', '8B', '8A', '8B+', or '8A+'.
 def plot_grade_heatmap(df, grade, scale='font_scale'): 
+    '''
+    Plot a heatmap (11 times 18 grid) of the holds used for routes of that grade. Darker (green) values
+    mean that a hold is frequently used in routes of that grad. Bright values mean it is hardly used.
+    grade:     'all', '6A+', '6B+', '7B+', '7A', '7A+', '6C+', '6C', '6B', '7C', '7C+',
+               '7B', '8B', '8A', '8B+', or '8A+'.
+    '''
     assert scale == 'font_scale' or scale == 'v_grade'
 
     heatmap = np.zeros((1, config.N_ROWS * config.N_COLS))
@@ -126,8 +131,8 @@ def plot_grade_heatmap(df, grade, scale='font_scale'):
     plt.show()
     return
 
-# given the predicted values (y_pred) and the ground trouth, plots a confusion matrix 
 def plot_confusion_matrix(y_true, y_pred, normalize='true') -> None:
+    "Given the predicted values (y_pred) and the ground trouth, plots a confusion matrix."
     from sklearn.metrics import confusion_matrix
     matrix = confusion_matrix(y_true, y_pred, normalize=normalize)
     fig, ax = plt.subplots()
@@ -139,12 +144,14 @@ def plot_confusion_matrix(y_true, y_pred, normalize='true') -> None:
     plt.show()
     return
 
-# plots a line chart of a routes probability as beeing classified of a certain grade.
-# y_true:      Ground trouth, e.g. 4
-# y_probas:    Classifiers Probabilities of predicting a certain class ( .predict_proba() in sklearn)
-#              e.g.[0.03515419 0.12533069 0.41219004 0.14129291 0.12183386 0.12676201
-#              0.01930746 0.00851937 0.00437948 0.00145201 0.00377798]
 def plot_classifiers_certainty(y_true, y_probas, show_full_y_axis=False) -> None:
+    '''
+    plots a line chart of a routes probability as beeing classified of a certain grade.
+    y_true:      Ground trouth, e.g. 4
+    y_probas:    Classifiers Probabilities of predicting a certain class ( .predict_proba() in sklearn)
+                 e.g.[0.03515419 0.12533069 0.41219004 0.14129291 0.12183386 0.12676201
+                 0.01930746 0.00851937 0.00437948 0.00145201 0.00377798]
+    '''
     from data_loading import V_GRADE
     import matplotlib.ticker as mtick
     plt.plot(y_probas[0], label='Predicted Rating')

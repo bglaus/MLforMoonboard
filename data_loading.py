@@ -1,7 +1,10 @@
 import pandas as pd
+from config import BOARD
 
-DATA_PATH = './data/2017.json'
+DATA_PATH = f'./data/{BOARD}.json'
 
+# Numerical representation of the font scale.  
+# Numbers don't match to V grade, use FONT_SCALE_TO_V_GRADE to convert grades.
 FONT_SCALE = {
     '8B+': 15,     
     '8B' : 14,
@@ -21,6 +24,8 @@ FONT_SCALE = {
     '6A' : 0,
 }
 
+# Numerical representation of V grades. 
+# Numbers don't match to font scale, use inverse of FONT_SCALE_TO_V_GRADE to convert grades.
 V_GRADE = {
     'V13': 10,
     'V12': 9,
@@ -35,6 +40,7 @@ V_GRADE = {
     'V3':  0,
 }
 
+# Turn Font scale into matching V grade.
 FONT_SCALE_TO_V_GRADE = {
     '8B+': 'V13',     
     '8B' : 'V12',
